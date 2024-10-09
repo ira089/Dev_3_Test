@@ -1,31 +1,19 @@
-<div id="word-container">
-  <span class="letter">C</span>
-  <span class="letter">A</span>
-  <span class="letter">T</span>
-  <span class="letter">C</span>
-  <span class="letter">H</span>
-</div>;
-
-// #word-container {
-//   display: flex;
-//   gap: 10px;
-// }
-
-// .letter {
-//   font-size: 32px;
-//   cursor: pointer;
-//   position: relative;
-//   user-select: none; /* Disable text selection */
-// }
-
 const letters = document.querySelectorAll(".letter");
 
+const arr = [];
 letters.forEach((letter) => {
   letter.addEventListener("mousedown", onMouseDown);
 
   function onMouseDown(event) {
+    letter.style.color = "blue";
+    const startX = event.clientX;
+    const startY = event.clientY;
+    console.log(startX);
+    console.log(startY);
     let shiftX = event.clientX - letter.getBoundingClientRect().left;
     let shiftY = event.clientY - letter.getBoundingClientRect().top;
+    console.log(letter.getBoundingClientRect().left);
+    console.log(shiftX);
 
     letter.style.position = "absolute";
     letter.style.zIndex = 1000;
@@ -47,6 +35,23 @@ letters.forEach((letter) => {
     letter.onmouseup = function () {
       document.removeEventListener("mousemove", onMouseMove);
       letter.onmouseup = null;
+      console.log(letter.style.left);
+      const findXY = arr.find(
+        (el) =>
+          el.x === letter.getBoundingClientRect().left &&
+          el.y === letter.getBoundingClientRect().top
+      );
+      console.log(findXY);
+      if (!findXY) {
+        arr.push({
+          x: letter.getBoundingClientRect().left,
+          y: letter.getBoundingClientRect().top,
+        });
+        console.log(arr);
+      } else {
+        console.log(findXY);
+      }
+      letter.style.color = "black";
     };
   }
 
