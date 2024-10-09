@@ -1,4 +1,5 @@
 const letters = document.querySelectorAll(".letter");
+const container = document.getElementById("word-container");
 
 const arr = [];
 letters.forEach((letter) => {
@@ -35,22 +36,22 @@ letters.forEach((letter) => {
     letter.onmouseup = function () {
       document.removeEventListener("mousemove", onMouseMove);
       letter.onmouseup = null;
-      console.log(letter.style.left);
-      const findXY = arr.find(
-        (el) =>
-          el.x === letter.getBoundingClientRect().left &&
-          el.y === letter.getBoundingClientRect().top
-      );
-      console.log(findXY);
-      if (!findXY) {
-        arr.push({
-          x: letter.getBoundingClientRect().left,
-          y: letter.getBoundingClientRect().top,
-        });
-        console.log(arr);
-      } else {
-        console.log(findXY);
-      }
+
+      // const findXY = arr.find(
+      //   (el) =>
+      //     el.x === letter.getBoundingClientRect().left &&
+      //     el.y === letter.getBoundingClientRect().top
+      // );
+      // console.log(findXY);
+      // if (!findXY) {
+      //   arr.push({
+      //     x: letter.getBoundingClientRect().left,
+      //     y: letter.getBoundingClientRect().top,
+      //   });
+      //   console.log(arr);
+      // } else {
+      //   console.log(findXY);
+      // }
       letter.style.color = "black";
     };
   }
