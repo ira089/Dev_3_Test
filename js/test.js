@@ -17,7 +17,7 @@ const handlerInputName = (event) => {
     container.append(letter);
   });
   letters = document.querySelectorAll(".letter");
-  console.log(letters);
+
   // Применяем события для новых букв
   addLetterEvents();
 };
@@ -65,6 +65,7 @@ function addLetterEvents() {
 
         // Проверка на нахождение над другим символом
         let swapLetter = findHoveredLetter(letter);
+        console.dir(swapLetter);
 
         if (swapLetter && swapLetter !== letter) {
           // Перестановка символов
@@ -84,12 +85,16 @@ function addLetterEvents() {
 
 // Функция для поиска символа под курсором
 function findHoveredLetter(currentLetter) {
+  console.log(currentLetter);
   let currentRect = currentLetter.getBoundingClientRect();
-
+  console.log(currentRect);
   return Array.from(letters).find((letter) => {
-    if (letter === currentLetter) return false;
+    if (letter === currentLetter) {
+      return false;
+    }
 
     let rect = letter.getBoundingClientRect();
+    console.log(rect);
     return (
       currentRect.left < rect.right &&
       currentRect.right > rect.left &&
@@ -101,10 +106,13 @@ function findHoveredLetter(currentLetter) {
 
 // Функция для перестановки символов в DOM
 function swapElements(element1, element2) {
+  console.log(element1);
+  console.log(element2);
   const parent = element1.parentNode;
+  console.log(parent);
   const sibling =
     element1.nextSibling === element2 ? element1 : element1.nextSibling;
-
+  console.log(element2.nextSibling);
   // Перестановка местами
   parent.insertBefore(element2, sibling);
   parent.insertBefore(element1, element2);
