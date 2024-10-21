@@ -1,6 +1,6 @@
 const letters = document.querySelectorAll(".letter");
 const container = document.getElementById("word-container");
-
+console.log(letters);
 const arr = [];
 letters.forEach((letter) => {
   letter.addEventListener("mousedown", onMouseDown);
