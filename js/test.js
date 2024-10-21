@@ -87,7 +87,7 @@ function addLetterEvents() {
 function findHoveredLetter(currentLetter) {
   console.log(currentLetter);
   let currentRect = currentLetter.getBoundingClientRect();
-  console.log(currentRect);
+  console.log(Array.from(letters));
   return Array.from(letters).find((letter) => {
     if (letter === currentLetter) {
       return false;
