@@ -1,0 +1,17 @@
+/* #text-container {
+  padding-top: 80px;
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border: 1px solid black;
+  user-select: none; Отключить стандартное выделение 
+} */
+.selected {
+  background-color: yellow; /* Цвет выделения */
+}
+.selection-box {
+  position: absolute;
+  border: 1px dashed blueviolet;
+  background-color: rgba(0, 0, 0, 0.2);
+  /* pointer-events: none; */
+}
