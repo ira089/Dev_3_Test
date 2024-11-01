@@ -91,31 +91,41 @@ container.addEventListener(
     // Завершение выделения
     container.addEventListener("mouseup", onMouseUp);
   },
-  // Обработчик mousedown сработает один раз и автоматически удалится
+
   { once: true }
 );
 
-// перемещение выделеной области
-// function moveSelectedArea(selectionBox) {}
 function dragstartHandler(event) {
   selectionBox = event.target;
-  event.dataTransfer.setData("text/plain", "");
-  console.log(selectionBox);
+  selectionBox.style.background = "rgb(192, 253, 255)";
 }
 function dragoverHandler(event) {
   event.preventDefault();
 }
 function dropHandler(event) {
+  console.log(event);
   event.preventDefault();
+
+  // selectionBox.style.position = "static";
+
   if (selectionBox) {
-    console.log(selectionBox);
-    target.appendChild(selectionBox); // Перемещаем элемент в область drop-target
-    selectionBox = null; // Сбрасываем ссылку на элемент после перемещения
-    // selectionBox.parentNode.removeChild(selectionBox);
-    // event.target.appendChild(selectionBox);
+    // Вычисляем новые координаты относительно целевого контейнера
+    const dropTargetRect = event.target.getBoundingClientRect();
+    const offsetX = event.clientX - dropTargetRect.left;
+    const offsetY = event.clientY - dropTargetRect.top;
+    selectionBox.parentNode.removeChild(selectionBox);
+    event.target.appendChild(selectionBox);
+    // Сброс координат для правильного отображения
+    // selectionBox.style.left = "0px";
+    // selectionBox.style.top = "0px";
+    // Устанавливаем новые координаты для правильного позиционирования
+    selectionBox.style.left = `${offsetX}px`;
+    selectionBox.style.top = `${offsetY}px`;
+    selectionBox.style.background = "rgba(0, 0, 0, 0.2)";
+
+    // selectionBox.style.position = "absolute";
+    selectionBox = null;
   }
 }
-
-// container.addEventListener("dragstart", dragstartHandler);
 target.addEventListener("dragover", dragoverHandler);
 target.addEventListener("drop", dropHandler);
