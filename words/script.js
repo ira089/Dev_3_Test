@@ -1,9 +1,9 @@
 const inputName = document.querySelector("#name-input");
-const container = document.querySelector("#word-container");
 const btnName = document.querySelector("#name-button");
 const formName = document.querySelector("#name-form");
 const targetBody = document.querySelector("body");
 const target = document.getElementById("drop-target");
+const container = document.querySelector("#word-container");
 
 let letters = [];
 let isSelecting = false;
@@ -37,6 +37,7 @@ function createSelectionBox(x, y) {
   selectionBox.style.top = `${y}px`;
   container.append(selectionBox);
   selectionBox.id = "source";
+
   console.log("first");
 }
 // Обновляем размер прямоугольника выделения
@@ -55,6 +56,7 @@ function endSelectionBox(x, y) {
   updateSelectionBox(x, y);
   // добавляем атрибут для перемещения
   selectionBox.draggable = "true";
+  selectionBox.addEventListener("dragstart", dragstartHandler);
   console.log("end");
 }
 
@@ -95,30 +97,25 @@ container.addEventListener(
 
 // перемещение выделеной области
 // function moveSelectedArea(selectionBox) {}
-container.addEventListener("dragstart", (event) => {
-  // store a ref. on the dragged elem
-  console.log(event.target);
+function dragstartHandler(event) {
   selectionBox = event.target;
-});
-
-target.addEventListener("dragover", (event) => {
-  console.log("dragover");
-  // prevent default to allow drop
-  event.preventDefault();
-});
-
-target.addEventListener("drop", (event) => {
-  console.log("drop1");
-  // prevent default action (open as a link for some elements)
-  event.preventDefault();
-  console.log(event.target);
+  event.dataTransfer.setData("text/plain", "");
   console.log(selectionBox);
-  selectionBox.parentNode.removeChild(selectionBox);
-  event.target.appendChild(selectionBox);
-  // move dragged element to the selected drop target
-  if (event.target.className === "dropzone") {
-    console.log("перетащили");
+}
+function dragoverHandler(event) {
+  event.preventDefault();
+}
+function dropHandler(event) {
+  event.preventDefault();
+  if (selectionBox) {
+    console.log(selectionBox);
+    target.appendChild(selectionBox); // Перемещаем элемент в область drop-target
+    selectionBox = null; // Сбрасываем ссылку на элемент после перемещения
     // selectionBox.parentNode.removeChild(selectionBox);
     // event.target.appendChild(selectionBox);
   }
-});
+}
+
+// container.addEventListener("dragstart", dragstartHandler);
+target.addEventListener("dragover", dragoverHandler);
+target.addEventListener("drop", dropHandler);
