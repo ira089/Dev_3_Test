@@ -2,6 +2,7 @@ const inputName = document.querySelector("#name-input");
 const container = document.querySelector("#word-container");
 const btnName = document.querySelector("#name-button");
 const formName = document.querySelector("#name-form");
+const targetBody = document.querySelector("body");
 
 let letters = [];
 let isSelecting = false;
@@ -21,21 +22,22 @@ const handlerInputName = (event) => {
     container.append(letter);
   });
   letters = document.querySelectorAll(".letter");
-
   // Применяем события для выделеного слова
   //   addWordEvents();
 };
 
 formName.addEventListener("submit", handlerInputName);
-// clientX;
-// screenX;
 // Создаем прямоугольник выделения
 function createSelectionBox(x, y) {
   selectionBox = document.createElement("div");
   selectionBox.classList.add("selection-box");
   selectionBox.style.left = `${x}px`;
   selectionBox.style.top = `${y}px`;
+
+  // добавляем атрибут для перемещения
+  // selectionBox.draggable = "true";
   container.append(selectionBox);
+  selectionBox.id = "source";
 }
 // Обновляем размер прямоугольника выделения
 function updateSelectionBox(x, y) {
@@ -66,15 +68,52 @@ container.addEventListener("mousemove", (e) => {
 container.addEventListener("mouseup", (e) => {
   if (isSelecting) {
     updateSelectionBox(e.clientX, e.clientY);
-    // const x1 = Math.min(startX, e.clientX);
-    // const y1 = Math.min(startY, e.clientY);
-    // const x2 = Math.max(startX, e.clientX);
-    // const y2 = Math.max(startY, e.clientY);
-
-    // selectTextInRange(x1, y1, x2, y2);
-
-    // container.removeChild(selectionBox);
-    // selectionBox = null;
     isSelecting = false;
+    container.removeEventListener("mousemove", (e) => {
+      if (isSelecting) {
+        updateSelectionBox(e.clientX, e.clientY);
+      }
+    });
+    selectionBox = null;
+    moveSelectedArea(selectionBox);
   }
 });
+
+// перемещение выделеной области
+function moveSelectedArea(selectionBox) {
+  selectionBox.addEventListener("dragstart", (event) => {
+    console.log(event);
+    console.log("dragStart");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", event.target.id);
+    event.currentTarget.classList.add("dragging");
+
+    // event.dataTransfer.clearData();
+  });
+
+  selectionBox.addEventListener("dragend", (event) =>
+    event.target.classList.remove("dragging")
+  );
+
+  targetBody.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    console.log("dragOver");
+    event.dataTransfer.dropEffect = "move";
+  });
+
+  targetBody.addEventListener("drop", (event) => {
+    event.preventDefault();
+    console.log("Drop");
+    const data = event.dataTransfer.getData("text/plain");
+    const source = document.getElementById(data);
+    if (source) {
+      // Перемещаем source к месту drop
+      source.style.position = "absolute";
+      source.style.left = `${event.clientX}px`;
+      source.style.top = `${event.clientY}px`;
+      console.log("Dropped!");
+    }
+    // event.target.appendChild(source);
+    // console.log("Dropped!");
+  });
+}
