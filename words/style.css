@@ -18,3 +18,10 @@
 .dragging {
   background-color: pink;
 }
+.dropzone {
+  /* width: 200px; */
+  height: 20px;
+  background: pink;
+  margin: 30px;
+  padding: 10px;
+}

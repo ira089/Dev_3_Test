@@ -1,0 +1,28 @@
+/* * {
+  box-sizing: border-box;
+} */
+
+body {
+  background-color: rgb(192, 242, 242);
+  /* Prevent the user from selecting text in the example запретить пользователю выбирать текст в при мере*/
+  user-select: none;
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0; */
+}
+
+#draggable {
+  text-align: center;
+  background: white;
+}
+
+.dropzone {
+  width: 200px;
+  height: 20px;
+  background: blueviolet;
+  margin: 10px;
+  padding: 10px;
+}

@@ -3,6 +3,7 @@ const container = document.querySelector("#word-container");
 const btnName = document.querySelector("#name-button");
 const formName = document.querySelector("#name-form");
 const targetBody = document.querySelector("body");
+const target = document.getElementById("drop-target");
 
 let letters = [];
 let isSelecting = false;
@@ -27,17 +28,16 @@ const handlerInputName = (event) => {
 };
 
 formName.addEventListener("submit", handlerInputName);
+
 // Создаем прямоугольник выделения
 function createSelectionBox(x, y) {
   selectionBox = document.createElement("div");
   selectionBox.classList.add("selection-box");
   selectionBox.style.left = `${x}px`;
   selectionBox.style.top = `${y}px`;
-
-  // добавляем атрибут для перемещения
-  // selectionBox.draggable = "true";
   container.append(selectionBox);
   selectionBox.id = "source";
+  console.log("first");
 }
 // Обновляем размер прямоугольника выделения
 function updateSelectionBox(x, y) {
@@ -47,73 +47,78 @@ function updateSelectionBox(x, y) {
   selectionBox.style.height = `${Math.abs(height)}px`;
   selectionBox.style.left = `${Math.min(startX, x)}px`;
   selectionBox.style.top = `${Math.min(startY, y)}px`;
+  console.log("second");
+}
+
+//заканчиваем выделение
+function endSelectionBox(x, y) {
+  updateSelectionBox(x, y);
+  // добавляем атрибут для перемещения
+  selectionBox.draggable = "true";
+  console.log("end");
+}
+
+// Функция-обработчик для движения мыши
+function onMouseMove(e) {
+  if (isSelecting) {
+    updateSelectionBox(e.clientX, e.clientY);
+  }
+}
+
+// Функция-обработчик для завершения выделения
+function onMouseUp(e) {
+  if (isSelecting) {
+    endSelectionBox(e.clientX, e.clientY);
+    isSelecting = false;
+    // Удаляем слушатели
+    container.removeEventListener("mousemove", onMouseMove);
+    container.removeEventListener("mouseup", onMouseUp);
+  }
 }
 
 // Начало выделения
-container.addEventListener("mousedown", (e) => {
-  isSelecting = true;
-  startX = e.clientX;
-  startY = e.clientY;
-  createSelectionBox(startX, startY);
-});
-
-// Движение мыши
-container.addEventListener("mousemove", (e) => {
-  if (isSelecting) {
-    updateSelectionBox(e.clientX, e.clientY);
-  }
-});
-
-// Завершение выделения
-container.addEventListener("mouseup", (e) => {
-  if (isSelecting) {
-    updateSelectionBox(e.clientX, e.clientY);
-    isSelecting = false;
-    container.removeEventListener("mousemove", (e) => {
-      if (isSelecting) {
-        updateSelectionBox(e.clientX, e.clientY);
-      }
-    });
-    selectionBox = null;
-    moveSelectedArea(selectionBox);
-  }
-});
+container.addEventListener(
+  "mousedown",
+  (e) => {
+    isSelecting = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    createSelectionBox(startX, startY);
+    // Движение мыши
+    container.addEventListener("mousemove", onMouseMove);
+    // Завершение выделения
+    container.addEventListener("mouseup", onMouseUp);
+  },
+  // Обработчик mousedown сработает один раз и автоматически удалится
+  { once: true }
+);
 
 // перемещение выделеной области
-function moveSelectedArea(selectionBox) {
-  selectionBox.addEventListener("dragstart", (event) => {
-    console.log(event);
-    console.log("dragStart");
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", event.target.id);
-    event.currentTarget.classList.add("dragging");
+// function moveSelectedArea(selectionBox) {}
+container.addEventListener("dragstart", (event) => {
+  // store a ref. on the dragged elem
+  console.log(event.target);
+  selectionBox = event.target;
+});
 
-    // event.dataTransfer.clearData();
-  });
+target.addEventListener("dragover", (event) => {
+  console.log("dragover");
+  // prevent default to allow drop
+  event.preventDefault();
+});
 
-  selectionBox.addEventListener("dragend", (event) =>
-    event.target.classList.remove("dragging")
-  );
-
-  targetBody.addEventListener("dragover", (event) => {
-    event.preventDefault();
-    console.log("dragOver");
-    event.dataTransfer.dropEffect = "move";
-  });
-
-  targetBody.addEventListener("drop", (event) => {
-    event.preventDefault();
-    console.log("Drop");
-    const data = event.dataTransfer.getData("text/plain");
-    const source = document.getElementById(data);
-    if (source) {
-      // Перемещаем source к месту drop
-      source.style.position = "absolute";
-      source.style.left = `${event.clientX}px`;
-      source.style.top = `${event.clientY}px`;
-      console.log("Dropped!");
-    }
-    // event.target.appendChild(source);
-    // console.log("Dropped!");
-  });
-}
+target.addEventListener("drop", (event) => {
+  console.log("drop1");
+  // prevent default action (open as a link for some elements)
+  event.preventDefault();
+  console.log(event.target);
+  console.log(selectionBox);
+  selectionBox.parentNode.removeChild(selectionBox);
+  event.target.appendChild(selectionBox);
+  // move dragged element to the selected drop target
+  if (event.target.className === "dropzone") {
+    console.log("перетащили");
+    // selectionBox.parentNode.removeChild(selectionBox);
+    // event.target.appendChild(selectionBox);
+  }
+});
